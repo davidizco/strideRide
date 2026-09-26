@@ -33,7 +33,8 @@ app.get('/api/stats', async (req, res) => {
 app.get('/api/activities', async (req, res) => {
   const page = Math.max(1, Number.parseInt(req.query.page, 10) || 1)
   const perPage = Math.min(200, Math.max(1, Number.parseInt(req.query.per_page, 10) || 30))
-  res.json(await getActivities({ page, perPage }))
+  const after = Number.parseInt(req.query.after, 10)
+  res.json(await getActivities({ page, perPage, after: after > 0 ? after : undefined }))
 })
 
 app.get('/api/activities/:id', async (req, res) => {
