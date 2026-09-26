@@ -1,3 +1,4 @@
+import { activityHref } from '../hooks/useHashRoute.js'
 import {
   formatActivityDate,
   formatDistance,
@@ -31,12 +32,7 @@ export default function ActivityItem({ activity }) {
           {formatActivityDate(activity.start_date_local)}
         </time>
       </div>
-      <a
-        className="activity-name"
-        href={`https://www.strava.com/activities/${activity.id}`}
-        target="_blank"
-        rel="noreferrer"
-      >
+      <a className="activity-name" href={activityHref(activity.id)}>
         {activity.name}
       </a>
       <ul className="activity-metrics">

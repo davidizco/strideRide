@@ -1,7 +1,15 @@
 import express from 'express'
+import { summarizeStreams } from './analysis/streams.js'
 import { config } from './config.js'
 import { buildAuthorizeUrl, consumeState, exchangeCode, isConnected } from './strava/auth.js'
-import { getActivities, getActivity, getAthlete, getAthleteStats } from './strava/client.js'
+import {
+  getActivities,
+  getActivity,
+  getActivityStreams,
+  getActivityZones,
+  getAthlete,
+  getAthleteStats,
+} from './strava/client.js'
 
 const app = express()
 
@@ -37,11 +45,23 @@ app.get('/api/activities', async (req, res) => {
   res.json(await getActivities({ page, perPage, after: after > 0 ? after : undefined }))
 })
 
-app.get('/api/activities/:id', async (req, res) => {
-  if (!/^\d+$/.test(req.params.id)) {
+app.param('id', (req, res, next, id) => {
+  if (!/^\d{1,20}$/.test(id)) {
     return res.status(400).json({ error: 'Id de actividad no válido' })
   }
+  next()
+})
+
+app.get('/api/activities/:id', async (req, res) => {
   res.json(await getActivity(req.params.id))
+})
+
+app.get('/api/activities/:id/zones', async (req, res) => {
+  res.json(await getActivityZones(req.params.id))
+})
+
+app.get('/api/activities/:id/streams', async (req, res) => {
+  res.json(summarizeStreams(await getActivityStreams(req.params.id)))
 })
 
 app.use((err, req, res, _next) => {

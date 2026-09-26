@@ -17,8 +17,9 @@ description: 'Referencia de la API de Strava v3 para strideRide. Use when: añad
 |---|---|
 | `server/strava/auth.js` | URL de autorización con `state`, intercambio de `code`, refresco automático del token |
 | `server/strava/tokenStore.js` | Lee/escribe `.data/strava-tokens.json` |
-| `server/strava/client.js` | `stravaGet()` y funciones por endpoint (`getAthlete`, `getActivities`...) |
-| `server/index.js` | Rutas `/auth/*` y `/api/*` |
+| `server/strava/client.js` | `stravaGet(path, params, { ttlMs })` con caché en memoria y funciones por endpoint (`getAthlete`, `getActivities`, `getActivity`, `getActivityZones`, `getActivityStreams`) |
+| `server/analysis/streams.js` | `summarizeStreams()`: serie reducida (~300 puntos) de FC/potencia y curva de potencia |
+| `server/index.js` | Rutas `/auth/*` y `/api/*` (`/api/activities/:id`, `/zones`, `/streams`) |
 
 ## Procedimiento: añadir un endpoint
 
@@ -36,6 +37,9 @@ description: 'Referencia de la API de Strava v3 para strideRide. Use when: añad
 - **Tokens**: el access token caduca a las 6 h; `getAccessToken()` lo refresca solo. El `refresh_token` puede cambiar: guarda siempre el último.
 - **Límites** (por aplicación): lectura 100 peticiones/15 min y 1.000/día por defecto. Se reinician a los minutos 0/15/30/45 y a medianoche UTC. Cabeceras `X-ReadRateLimit-Limit` / `X-ReadRateLimit-Usage`. Un 429 no se reintenta en bucle.
 - Para cargas masivas (histórico completo, IA), descarga una vez y guarda en local en vez de pedir a Strava en cada consulta.
+- **Potencia real**: solo si `device_watts === true`. El usuario tiene potencia en carrera (sensor) y no en BTT (allí Strava la estima).
+- **Zonas** (`/activities/{id}/zones`, requiere suscripción): `heartrate` (5 zonas), `pace` y `power` (histograma de 50 W). `max: -1` = sin tope.
+- **Streams**: pueden faltar canales (sin pulsómetro no hay `heartrate`); `time` puede tener huecos por auto-pause.
 
 ## Datos reales durante el desarrollo
 

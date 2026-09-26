@@ -16,3 +16,7 @@ export function getActivities({ after, perPage = 100 } = {}, signal) {
   if (after) params.set('after', after)
   return getJson(`/api/activities?${params}`, signal)
 }
+
+export const getActivity = (id, signal) => getJson(`/api/activities/${id}`, signal)
+export const getActivityZones = (id, signal) => getJson(`/api/activities/${id}/zones`, signal)
+export const getActivityStreams = (id, signal) => getJson(`/api/activities/${id}/streams`, signal)
