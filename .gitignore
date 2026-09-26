@@ -16,6 +16,9 @@ pnpm-debug.log*
 .env.*
 !.env.example
 
+# Tokens de Strava y datos locales
+.data/
+
 # Editor / SO
 .vscode/*
 !.vscode/extensions.json
