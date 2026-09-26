@@ -1,16 +1,25 @@
-import { formatEnergy, formatPower } from '../utils/format.js'
-import PowerCurveChart from './PowerCurveChart.jsx'
-import ZoneBars from './ZoneBars.jsx'
+import { formatEnergy, formatPower } from "../utils/format.js";
+import PowerCurveChart from "./PowerCurveChart.jsx";
+import ZoneBars from "./ZoneBars.jsx";
 
-const POWER_COLOR = '#f2a900'
+const POWER_COLOR = "#f2a900";
 
 export default function PowerSummary({ activity, curve, zones }) {
   const metrics = [
-    { label: 'Media', value: formatPower(activity.average_watts) },
-    activity.weighted_average_watts && { label: 'Normalizada', value: formatPower(activity.weighted_average_watts) },
-    activity.max_watts && { label: 'Máxima', value: formatPower(activity.max_watts) },
-    activity.kilojoules && { label: 'Trabajo', value: formatEnergy(activity.kilojoules) },
-  ].filter(Boolean)
+    { label: "Media", value: formatPower(activity.average_watts) },
+    activity.weighted_average_watts && {
+      label: "Normalizada",
+      value: formatPower(activity.weighted_average_watts),
+    },
+    activity.max_watts && {
+      label: "Máxima",
+      value: formatPower(activity.max_watts),
+    },
+    activity.kilojoules && {
+      label: "Trabajo",
+      value: formatEnergy(activity.kilojoules),
+    },
+  ].filter(Boolean);
 
   return (
     <section className="section card">
@@ -38,5 +47,5 @@ export default function PowerSummary({ activity, curve, zones }) {
         </>
       )}
     </section>
-  )
+  );
 }

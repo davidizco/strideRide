@@ -21,7 +21,7 @@ PowerShell bloquea `npm.ps1`: usa siempre `npm.cmd`.
 ## Arquitectura y reglas
 
 - **Secretos solo en el servidor.** `STRAVA_CLIENT_SECRET`, tokens y futuras claves de IA viven en `.env` / `.data/` y nunca se importan ni se exponen en `src/`. El frontend solo llama a `/api/*`.
-- **Toda llamada a Strava pasa por `server/strava/client.js`.** Las rutas de `server/index.js` solo validan la entrada y llaman al cliente. Estas funciones serán también las *tools* del futuro asistente IA, así que deben ser puras, con parámetros claros y sin lógica de HTTP de Express.
+- **Toda llamada a Strava pasa por `server/strava/client.js`.** Las rutas de `server/index.js` solo validan la entrada y llaman al cliente. Estas funciones serán también las _tools_ del futuro asistente IA, así que deben ser puras, con parámetros claros y sin lógica de HTTP de Express.
 - Errores del servidor: lanzar `Error` con propiedad `status`; el manejador global de `server/index.js` responde `{ error }`.
 - Valida y acota parámetros de entrada (`page`, `per_page`, ids) en las rutas.
 - Respeta los límites de Strava: evita pedir datos en bucle; cachea cuando tenga sentido.

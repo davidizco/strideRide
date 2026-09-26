@@ -1,21 +1,22 @@
-import { useState } from 'react'
-import { SPORT_GROUPS } from '../utils/sports.js'
-import SportTotalsCard from './SportTotalsCard.jsx'
+import { useState } from "react";
+import { SPORT_GROUPS } from "../utils/sports.js";
+import SportTotalsCard from "./SportTotalsCard.jsx";
 
 const PERIODS = [
-  { id: 'recent', label: '4 semanas' },
-  { id: 'ytd', label: 'Este año' },
-  { id: 'all', label: 'Total' },
-]
+  { id: "recent", label: "4 semanas" },
+  { id: "ytd", label: "Este año" },
+  { id: "all", label: "Total" },
+];
 
-const SPORTS = ['run', 'ride', 'swim']
+const SPORTS = ["run", "ride", "swim"];
 
 export default function StatsSummary({ stats }) {
-  const [period, setPeriod] = useState('recent')
+  const [period, setPeriod] = useState("recent");
 
-  const cards = SPORTS.map((sport) => ({ sport, totals: stats[`${period}_${sport}_totals`] })).filter(
-    ({ totals }) => totals?.count > 0,
-  )
+  const cards = SPORTS.map((sport) => ({
+    sport,
+    totals: stats[`${period}_${sport}_totals`],
+  })).filter(({ totals }) => totals?.count > 0);
 
   return (
     <section className="section">
@@ -28,7 +29,7 @@ export default function StatsSummary({ stats }) {
               type="button"
               role="tab"
               aria-selected={period === id}
-              className={period === id ? 'tab active' : 'tab'}
+              className={period === id ? "tab active" : "tab"}
               onClick={() => setPeriod(id)}
             >
               {label}
@@ -42,10 +43,15 @@ export default function StatsSummary({ stats }) {
       ) : (
         <div className="totals-grid">
           {cards.map(({ sport, totals }) => (
-            <SportTotalsCard key={sport} label={SPORT_GROUPS[sport].label} color={SPORT_GROUPS[sport].color} totals={totals} />
+            <SportTotalsCard
+              key={sport}
+              label={SPORT_GROUPS[sport].label}
+              color={SPORT_GROUPS[sport].color}
+              totals={totals}
+            />
           ))}
         </div>
       )}
     </section>
-  )
+  );
 }

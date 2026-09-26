@@ -1,6 +1,6 @@
 ---
 name: strava-api
-description: 'Referencia de la API de Strava v3 para strideRide. Use when: añadir o modificar endpoints de Strava, OAuth/tokens, actividades, estadísticas del atleta, splits, zonas, streams, límites de peticiones (rate limit 429), unidades y campos de SummaryActivity/DetailedActivity, o preparar tools para el asistente IA.'
+description: "Referencia de la API de Strava v3 para strideRide. Use when: añadir o modificar endpoints de Strava, OAuth/tokens, actividades, estadísticas del atleta, splits, zonas, streams, límites de peticiones (rate limit 429), unidades y campos de SummaryActivity/DetailedActivity, o preparar tools para el asistente IA."
 ---
 
 # API de Strava en strideRide
@@ -9,17 +9,17 @@ description: 'Referencia de la API de Strava v3 para strideRide. Use when: añad
 
 - Añadir un dato nuevo de Strava al dashboard o al servidor.
 - Depurar errores 401/429/5xx de Strava.
-- Diseñar funciones que usará el futuro asistente IA como *tools*.
+- Diseñar funciones que usará el futuro asistente IA como _tools_.
 
 ## Arquitectura existente
 
-| Archivo | Responsabilidad |
-|---|---|
-| `server/strava/auth.js` | URL de autorización con `state`, intercambio de `code`, refresco automático del token |
-| `server/strava/tokenStore.js` | Lee/escribe `.data/strava-tokens.json` |
-| `server/strava/client.js` | `stravaGet(path, params, { ttlMs })` con caché en memoria y funciones por endpoint (`getAthlete`, `getActivities`, `getActivity`, `getActivityZones`, `getActivityStreams`) |
-| `server/analysis/streams.js` | `summarizeStreams()`: serie reducida (~300 puntos) de FC/potencia y curva de potencia |
-| `server/index.js` | Rutas `/auth/*` y `/api/*` (`/api/activities/:id`, `/zones`, `/streams`) |
+| Archivo                       | Responsabilidad                                                                                                                                                             |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `server/strava/auth.js`       | URL de autorización con `state`, intercambio de `code`, refresco automático del token                                                                                       |
+| `server/strava/tokenStore.js` | Lee/escribe `.data/strava-tokens.json`                                                                                                                                      |
+| `server/strava/client.js`     | `stravaGet(path, params, { ttlMs })` con caché en memoria y funciones por endpoint (`getAthlete`, `getActivities`, `getActivity`, `getActivityZones`, `getActivityStreams`) |
+| `server/analysis/streams.js`  | `summarizeStreams()`: serie reducida (~300 puntos) de FC/potencia y curva de potencia                                                                                       |
+| `server/index.js`             | Rutas `/auth/*` y `/api/*` (`/api/activities/:id`, `/zones`, `/streams`)                                                                                                    |
 
 ## Procedimiento: añadir un endpoint
 

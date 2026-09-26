@@ -5,18 +5,18 @@ import {
   formatPaceShort,
   formatPower,
   formatSpeed,
-} from '../utils/format.js'
+} from "../utils/format.js";
 
 function speedCell(lap, group) {
-  if (group === 'ride') return formatSpeed(lap.average_speed)
-  if (group === 'swim') return formatPaceShort(lap.average_speed, 100)
-  return formatPaceShort(lap.average_speed)
+  if (group === "ride") return formatSpeed(lap.average_speed);
+  if (group === "swim") return formatPaceShort(lap.average_speed, 100);
+  return formatPaceShort(lap.average_speed);
 }
 
-const SPEED_HEADER = { ride: 'Velocidad', swim: 'Ritmo /100 m' }
+const SPEED_HEADER = { ride: "Velocidad", swim: "Ritmo /100 m" };
 
 export default function LapsTable({ laps, group, showPower }) {
-  const hasHeartRate = laps.some((lap) => lap.average_heartrate)
+  const hasHeartRate = laps.some((lap) => lap.average_heartrate);
 
   return (
     <section className="section card">
@@ -28,7 +28,7 @@ export default function LapsTable({ laps, group, showPower }) {
               <th>#</th>
               <th>Distancia</th>
               <th>Tiempo</th>
-              <th>{SPEED_HEADER[group] ?? 'Ritmo'}</th>
+              <th>{SPEED_HEADER[group] ?? "Ritmo"}</th>
               {hasHeartRate && <th>FC</th>}
               {showPower && <th>Potencia</th>}
             </tr>
@@ -40,13 +40,23 @@ export default function LapsTable({ laps, group, showPower }) {
                 <td>{formatDistance(lap.distance)}</td>
                 <td>{formatClock(lap.moving_time)}</td>
                 <td>{speedCell(lap, group)}</td>
-                {hasHeartRate && <td>{lap.average_heartrate ? formatHeartRate(lap.average_heartrate) : '—'}</td>}
-                {showPower && <td>{lap.average_watts ? formatPower(lap.average_watts) : '—'}</td>}
+                {hasHeartRate && (
+                  <td>
+                    {lap.average_heartrate
+                      ? formatHeartRate(lap.average_heartrate)
+                      : "—"}
+                  </td>
+                )}
+                {showPower && (
+                  <td>
+                    {lap.average_watts ? formatPower(lap.average_watts) : "—"}
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
     </section>
-  )
+  );
 }

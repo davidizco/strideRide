@@ -1,4 +1,4 @@
-import ActivityItem from './ActivityItem.jsx'
+import ActivityItem from "./ActivityItem.jsx";
 
 export default function ActivityList({ activities, limit = 10 }) {
   return (
@@ -14,5 +14,5 @@ export default function ActivityList({ activities, limit = 10 }) {
         </ul>
       )}
     </section>
-  )
+  );
 }

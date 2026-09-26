@@ -1,12 +1,16 @@
-import { formatDistance, formatDuration, formatElevation } from '../utils/format.js'
+import {
+  formatDistance,
+  formatDuration,
+  formatElevation,
+} from "../utils/format.js";
 
 export default function SportTotalsCard({ label, color, totals }) {
   return (
-    <article className="card totals-card" style={{ '--accent': color }}>
+    <article className="card totals-card" style={{ "--accent": color }}>
       <header>
         <h3>{label}</h3>
         <span className="muted">
-          {totals.count} {totals.count === 1 ? 'actividad' : 'actividades'}
+          {totals.count} {totals.count === 1 ? "actividad" : "actividades"}
         </span>
       </header>
       <dl className="metrics">
@@ -24,5 +28,5 @@ export default function SportTotalsCard({ label, color, totals }) {
         </div>
       </dl>
     </article>
-  )
+  );
 }

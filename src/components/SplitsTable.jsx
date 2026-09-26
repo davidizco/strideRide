@@ -1,7 +1,11 @@
-import { formatHeartRate, formatPaceShort, formatSignedElevation } from '../utils/format.js'
+import {
+  formatHeartRate,
+  formatPaceShort,
+  formatSignedElevation,
+} from "../utils/format.js";
 
 export default function SplitsTable({ rows, showGap }) {
-  const hasHeartRate = rows.some((row) => row.heartrate)
+  const hasHeartRate = rows.some((row) => row.heartrate);
 
   return (
     <details className="detail-table">
@@ -23,7 +27,11 @@ export default function SplitsTable({ rows, showGap }) {
                 <td>{row.label}</td>
                 <td>{formatPaceShort(row.speed)}</td>
                 {showGap && <td>{formatPaceShort(row.gapSpeed)}</td>}
-                {hasHeartRate && <td>{row.heartrate ? formatHeartRate(row.heartrate) : '—'}</td>}
+                {hasHeartRate && (
+                  <td>
+                    {row.heartrate ? formatHeartRate(row.heartrate) : "—"}
+                  </td>
+                )}
                 <td>{formatSignedElevation(row.elevation)}</td>
               </tr>
             ))}
@@ -31,5 +39,5 @@ export default function SplitsTable({ rows, showGap }) {
         </table>
       </div>
     </details>
-  )
+  );
 }
