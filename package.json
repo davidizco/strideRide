@@ -10,6 +10,8 @@
     "dev:mobile": "concurrently -n web,api -c cyan,magenta \"vite --host\" \"npm:dev:api\"",
     "build": "vite build",
     "lint": "oxlint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -24,6 +26,7 @@
     "@vitejs/plugin-react": "^6.1.1",
     "concurrently": "^10.0.5",
     "oxlint": "^1.81.0",
+    "prettier": "^3.9.9",
     "vite": "^8.3.0"
   }
 }

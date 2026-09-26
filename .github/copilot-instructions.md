@@ -8,6 +8,7 @@ Aplicación personal (un solo usuario) para visualizar mis datos de Strava en un
 - **Servidor**: Node 24 + Express 5, en `server/`. Escucha solo en `127.0.0.1:3001`; Vite hace de proxy de `/api` y `/auth`.
 - **Datos**: API oficial de Strava con OAuth. Los tokens se guardan en `.data/strava-tokens.json` (ignorado por Git).
 - **Lint**: oxlint (`.oxlintrc.json`).
+- **Formato**: Prettier (`.prettierrc.json`): comillas dobles, punto y coma, comas finales y 80 columnas. Escribe el código ya con ese estilo y ejecuta `npm.cmd run format` tras editar.
 
 ## Comandos (Windows / PowerShell)
 
@@ -17,6 +18,7 @@ PowerShell bloquea `npm.ps1`: usa siempre `npm.cmd`.
 - `npm.cmd run dev:mobile` — igual, pero accesible desde el móvil en la misma red
 - `npm.cmd run build` — build de producción
 - `npm.cmd run lint` — lint
+- `npm.cmd run format` — formatea con Prettier (`format:check` solo comprueba)
 
 ## Arquitectura y reglas
 
