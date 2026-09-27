@@ -1,12 +1,14 @@
 # strideRide
 
-Aplicación personal (un solo usuario) para visualizar mis datos de Strava en un dashboard responsive. En el futuro incluirá un asistente IA que responda preguntas sobre mis datos y genere planes de entrenamiento.
+Aplicación personal (un solo usuario) que sustituye a RestorTrain: dashboard responsive de mis entrenos, calendario sincronizado con Garmin y, más adelante, un asistente IA que responda preguntas y genere/ajuste planes de entrenamiento.
 
 ## Stack
 
 - **Frontend**: React 19 + Vite 8, JavaScript (ESM), en `src/`. Sin TypeScript.
 - **Servidor**: Node 24 + Express 5, en `server/`. Escucha solo en `127.0.0.1:3001`; Vite hace de proxy de `/api` y `/auth`.
-- **Datos**: API oficial de Strava con OAuth. Los tokens se guardan en `.data/strava-tokens.json` (ignorado por Git).
+- **Datos**:
+  - **Strava** (OAuth, `server/strava/`): solo para el dashboard. Tokens en `.data/strava-tokens.json` (ignorado por Git).
+  - **Intervals.icu** (clave API personal, `server/intervals/`): calendario, entrenos planificados y datos de Garmin. Intervals.icu sincroniza con Garmin Connect de forma oficial.
 - **Lint**: oxlint (`.oxlintrc.json`).
 - **Formato**: Prettier (`.prettierrc.json`): comillas dobles, punto y coma, comas finales y 80 columnas. Escribe el código ya con ese estilo y ejecuta `npm.cmd run format` tras editar.
 
@@ -22,11 +24,13 @@ PowerShell bloquea `npm.ps1`: usa siempre `npm.cmd`.
 
 ## Arquitectura y reglas
 
-- **Secretos solo en el servidor.** `STRAVA_CLIENT_SECRET`, tokens y futuras claves de IA viven en `.env` / `.data/` y nunca se importan ni se exponen en `src/`. El frontend solo llama a `/api/*`.
-- **Toda llamada a Strava pasa por `server/strava/client.js`.** Las rutas de `server/index.js` solo validan la entrada y llaman al cliente. Estas funciones serán también las _tools_ del futuro asistente IA, así que deben ser puras, con parámetros claros y sin lógica de HTTP de Express.
+- **Secretos solo en el servidor.** `STRAVA_CLIENT_SECRET`, `INTERVALS_API_KEY`, tokens y futuras claves de IA viven en `.env` / `.data/` y nunca se importan ni se exponen en `src/`. El frontend solo llama a `/api/*`.
+- **Los datos de Strava nunca se usan con IA.** La API Policy de Strava (sección 5.3) prohíbe meter sus datos en cualquier aplicación de IA, incluido el contexto de un modelo, y (5.5) guardarlos más de 7 días. El asistente IA solo usará datos de Intervals.icu.
+- **Toda llamada a un servicio externo pasa por su cliente** (`server/strava/client.js`, `server/intervals/client.js`). Las rutas de `server/index.js` solo validan la entrada y llaman al cliente. Las funciones de `server/intervals/client.js` serán las _tools_ del futuro asistente IA, así que deben ser puras, con parámetros claros y sin lógica de HTTP de Express.
 - Errores del servidor: lanzar `Error` con propiedad `status`; el manejador global de `server/index.js` responde `{ error }`.
-- Valida y acota parámetros de entrada (`page`, `per_page`, ids) en las rutas.
-- Respeta los límites de Strava: evita pedir datos en bucle; cachea cuando tenga sentido.
+- Valida y acota parámetros de entrada (`page`, `per_page`, ids, rangos de fechas) en las rutas.
+- Respeta los límites de Strava e Intervals.icu: evita pedir datos en bucle; cachea cuando tenga sentido.
+- Si se muestran datos que vienen de Garmin (actividades de Intervals.icu con `source: GARMIN_CONNECT`), incluye la atribución a Garmin.
 
 ## Frontend
 
@@ -38,4 +42,4 @@ PowerShell bloquea `npm.ps1`: usa siempre `npm.cmd`.
 ## Conocimiento adicional
 
 - Detalles de la API de Strava (endpoints, campos, límites, cómo añadir un endpoint): skill `strava-api`.
-- Para ver datos reales de Strava durante el desarrollo se puede usar el MCP de Composio (si el toolkit de Strava está conectado).
+- Detalles de la API de Intervals.icu (calendario, entrenos, actividades, wellness): skill `intervals-api`.

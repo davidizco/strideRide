@@ -1,6 +1,6 @@
 ---
 name: strava-api
-description: "Referencia de la API de Strava v3 para strideRide. Use when: añadir o modificar endpoints de Strava, OAuth/tokens, actividades, estadísticas del atleta, splits, zonas, streams, límites de peticiones (rate limit 429), unidades y campos de SummaryActivity/DetailedActivity, o preparar tools para el asistente IA."
+description: "Referencia de la API de Strava v3 para strideRide. Use when: añadir o modificar endpoints de Strava, OAuth/tokens, actividades, estadísticas del atleta, splits, zonas, streams, límites de peticiones (rate limit 429), unidades y campos de SummaryActivity/DetailedActivity, o dudas sobre qué permite la API Policy de Strava (IA, caché)."
 ---
 
 # API de Strava en strideRide
@@ -9,7 +9,12 @@ description: "Referencia de la API de Strava v3 para strideRide. Use when: añad
 
 - Añadir un dato nuevo de Strava al dashboard o al servidor.
 - Depurar errores 401/429/5xx de Strava.
-- Diseñar funciones que usará el futuro asistente IA como _tools_.
+
+## API Policy de Strava (obligatorio)
+
+- **Sin IA** (sección 5.3): los datos de Strava no pueden usarse en ninguna aplicación de IA, ni siquiera como contexto de un modelo. El asistente IA usa Intervals.icu (skill `intervals-api`).
+- **Caché máxima de 7 días** (5.5 y 6.2): nada de bases de datos ni históricos persistentes con datos de Strava.
+- **Sin MCP de terceros** (5.16): no uses servidores MCP no oficiales (p. ej. Composio) para acceder a datos de Strava.
 
 ## Arquitectura existente
 
@@ -36,11 +41,8 @@ description: "Referencia de la API de Strava v3 para strideRide. Use when: añad
 - **Paginación**: `GET /athlete/activities` usa `page` y `per_page` (máx. 200). Para históricos usa `after`/`before` en epoch segundos.
 - **Tokens**: el access token caduca a las 6 h; `getAccessToken()` lo refresca solo. El `refresh_token` puede cambiar: guarda siempre el último.
 - **Límites** (por aplicación): lectura 100 peticiones/15 min y 1.000/día por defecto. Se reinician a los minutos 0/15/30/45 y a medianoche UTC. Cabeceras `X-ReadRateLimit-Limit` / `X-ReadRateLimit-Usage`. Un 429 no se reintenta en bucle.
-- Para cargas masivas (histórico completo, IA), descarga una vez y guarda en local en vez de pedir a Strava en cada consulta.
 - **Potencia real**: solo si `device_watts === true`. El usuario tiene potencia en carrera (sensor) y no en BTT (allí Strava la estima).
 - **Zonas** (`/activities/{id}/zones`, requiere suscripción): `heartrate` (5 zonas), `pace` y `power` (histograma de 50 W). `max: -1` = sin tope.
 - **Streams**: pueden faltar canales (sin pulsómetro no hay `heartrate`); `time` puede tener huecos por auto-pause.
 
-## Datos reales durante el desarrollo
-
-Si el MCP de Composio tiene Strava conectado, úsalo para inspeccionar la forma real de las respuestas antes de escribir código. Nunca copies tokens ni datos personales al código o a los commits.
+Nunca copies tokens ni datos personales al código o a los commits.

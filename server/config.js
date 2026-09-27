@@ -16,4 +16,9 @@ export const config = {
     clientSecret: required("STRAVA_CLIENT_SECRET"),
     scope: "read,profile:read_all,activity:read_all",
   },
+  intervals: {
+    apiKey: process.env.INTERVALS_API_KEY || null,
+    // "0" = el atleta dueño de la clave API.
+    athleteId: process.env.INTERVALS_ATHLETE_ID || "0",
+  },
 };

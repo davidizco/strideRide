@@ -1,6 +1,7 @@
 import express from "express";
 import { summarizeStreams } from "./analysis/streams.js";
 import { config } from "./config.js";
+import { getCalendar, isIntervalsConfigured } from "./intervals/client.js";
 import {
   buildAuthorizeUrl,
   consumeState,
@@ -81,6 +82,35 @@ app.get("/api/activities/:id/zones", async (req, res) => {
 
 app.get("/api/activities/:id/streams", async (req, res) => {
   res.json(summarizeStreams(await getActivityStreams(req.params.id)));
+});
+
+const MAX_CALENDAR_DAYS = 42;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function parseIsoDate(value) {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return null;
+  }
+  const date = new Date(`${value}T00:00:00Z`);
+  return date.toISOString().startsWith(value) ? date : null;
+}
+
+app.get("/api/intervals/status", (req, res) => {
+  res.json({ configured: isIntervalsConfigured() });
+});
+
+app.get("/api/calendar", async (req, res) => {
+  const oldest = parseIsoDate(req.query.oldest);
+  const newest = parseIsoDate(req.query.newest);
+  const days = oldest && newest ? (newest - oldest) / DAY_MS : -1;
+  if (days < 0 || days >= MAX_CALENDAR_DAYS) {
+    return res.status(400).json({
+      error: `Rango de fechas no válido (máximo ${MAX_CALENDAR_DAYS} días)`,
+    });
+  }
+  res.json(
+    await getCalendar({ oldest: req.query.oldest, newest: req.query.newest }),
+  );
 });
 
 app.use((err, req, res, _next) => {

@@ -1,12 +1,14 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import ActivityDetail from "./components/ActivityDetail.jsx";
 import ActivityList from "./components/ActivityList.jsx";
+import AppNav from "./components/AppNav.jsx";
+import CalendarView from "./components/CalendarView.jsx";
 import ConnectStrava from "./components/ConnectStrava.jsx";
 import DashboardHeader from "./components/DashboardHeader.jsx";
 import StatsSummary from "./components/StatsSummary.jsx";
 import WeeklyChart from "./components/WeeklyChart.jsx";
 import { DASHBOARD_WEEKS, useDashboardData } from "./hooks/useDashboardData.js";
-import { useHashRoute } from "./hooks/useHashRoute.js";
+import { isDashboardHash, useHashRoute } from "./hooks/useHashRoute.js";
 
 const connectFailed =
   new URLSearchParams(window.location.search).get("strava") === "error";
@@ -18,8 +20,6 @@ if (window.location.search)
   );
 window.history.scrollRestoration = "manual";
 
-const isDashboardHash = () => !window.location.hash.startsWith("#/actividad/");
-
 export default function App() {
   const data = useDashboardData();
   const route = useHashRoute();
@@ -29,7 +29,9 @@ export default function App() {
   useEffect(() => {
     // Se comprueba el hash en el momento del evento para ignorar el scroll provocado al cambiar de vista.
     const onScroll = () => {
-      if (isDashboardHash()) dashboardScroll.current = window.scrollY;
+      if (isDashboardHash(window.location.hash)) {
+        dashboardScroll.current = window.scrollY;
+      }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -56,8 +58,18 @@ export default function App() {
     );
   }
 
+  if (route.name === "calendar") {
+    return (
+      <main className="app">
+        <AppNav current="calendar" />
+        <CalendarView />
+      </main>
+    );
+  }
+
   return (
     <main className="app">
+      <AppNav current="dashboard" />
       {data.status === "loading" && (
         <p className="muted center">Cargando tus datos de Strava…</p>
       )}

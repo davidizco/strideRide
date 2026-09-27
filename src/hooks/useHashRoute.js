@@ -7,11 +7,15 @@ function subscribe(callback) {
 
 const getHash = () => window.location.hash;
 
-/** Router mínimo por hash: `#/actividad/:id` o el dashboard. */
+/** Router mínimo por hash: `#/actividad/:id`, `#/calendario` o el dashboard. */
 export function useHashRoute() {
   const hash = useSyncExternalStore(subscribe, getHash);
   const match = hash.match(/^#\/actividad\/(\d+)$/);
-  return match ? { name: "activity", id: match[1] } : { name: "dashboard" };
+  if (match) return { name: "activity", id: match[1] };
+  if (hash === "#/calendario") return { name: "calendar" };
+  return { name: "dashboard" };
 }
+
+export const isDashboardHash = (hash) => hash === "" || hash === "#/";
 
 export const activityHref = (id) => `#/actividad/${id}`;
