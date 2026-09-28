@@ -9,11 +9,13 @@ Intervals.icu es la fuente de datos para el calendario y para el futuro asistent
 
 ## Arquitectura existente
 
-| Archivo                       | Responsabilidad                                                                 |
-| ----------------------------- | ------------------------------------------------------------------------------- |
-| `server/intervals/client.js`  | `intervalsGet()` con Basic auth, `User-Agent` y caché de 2 min; `getCalendar()` |
-| `server/index.js`             | `GET /api/intervals/status`, `GET /api/calendar?oldest&newest` (máx. 42 días)   |
-| `src/components/CalendarView` | Vista semanal (lista en móvil, 7 columnas desde 960 px)                         |
+| Archivo                       | Responsabilidad                                                                                                                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `server/intervals/client.js`  | `intervalsGet()` con Basic auth, `User-Agent` y caché de 2 min; `getCalendar()`                                                                                    |
+| `server/intervals/client.js`  | Lecturas compactas para la IA: `getAthleteProfile`, `getWellness`, `listActivities`, `getActivityIntervals`, `getPlannedEvents` (filtran Strava y datos de cuenta) |
+| `server/assistant/`           | Chat IA: `tools.js` (tools de solo lectura y validación), `prompt.js`, `chat.js` (bucle de tools)                                                                  |
+| `server/index.js`             | `GET /api/intervals/status`, `GET /api/calendar?oldest&newest` (máx. 42 días)                                                                                      |
+| `src/components/CalendarView` | Vista semanal (lista en móvil, 7 columnas desde 960 px)                                                                                                            |
 
 ## Autenticación y límites
 

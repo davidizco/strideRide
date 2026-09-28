@@ -1,5 +1,7 @@
 import express from "express";
+import { isAiConfigured } from "./ai/client.js";
 import { summarizeStreams } from "./analysis/streams.js";
+import { answer } from "./assistant/chat.js";
 import { config } from "./config.js";
 import { getCalendar, isIntervalsConfigured } from "./intervals/client.js";
 import {
@@ -112,6 +114,50 @@ app.get("/api/calendar", async (req, res) => {
     await getCalendar({ oldest: req.query.oldest, newest: req.query.newest }),
   );
 });
+
+const MAX_HISTORY_MESSAGES = 10;
+const MAX_MESSAGE_CHARS = 2000;
+
+/** Últimos mensajes `user`/`assistant` de texto; `null` si el formato no es válido. */
+function parseHistory(messages) {
+  if (!Array.isArray(messages) || messages.length === 0) return null;
+  const history = messages.slice(-MAX_HISTORY_MESSAGES);
+  const valid = history.every(
+    (message) =>
+      (message?.role === "user" || message?.role === "assistant") &&
+      typeof message.content === "string" &&
+      message.content.trim().length > 0 &&
+      message.content.length <= MAX_MESSAGE_CHARS,
+  );
+  if (!valid || history.at(-1).role !== "user") return null;
+  return history.map(({ role, content }) => ({ role, content }));
+}
+
+app.get("/api/assistant/status", (req, res) => {
+  res.json({
+    ai: isAiConfigured(),
+    intervals: isIntervalsConfigured(),
+    model: config.ai.model,
+  });
+});
+
+// Solo JSON: un formulario de otra web no puede enviar este tipo sin permiso CORS.
+app.post(
+  "/api/assistant/chat",
+  express.json({ limit: "32kb" }),
+  async (req, res) => {
+    const history = parseHistory(req.body?.messages);
+    if (!history) {
+      return res.status(400).json({ error: "Conversación no válida" });
+    }
+    if (!isIntervalsConfigured()) {
+      return res
+        .status(503)
+        .json({ error: "Intervals.icu no está configurado." });
+    }
+    res.json(await answer(history));
+  },
+);
 
 app.use((err, req, res, _next) => {
   const status = err.status ?? 500;

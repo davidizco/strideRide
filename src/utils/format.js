@@ -112,7 +112,3 @@ export function formatActivityDate(startDateLocal) {
 export function formatFullDate(startDateLocal) {
   return fullDateFormat.format(new Date(startDateLocal));
 }
-
-export function formatHours(seconds) {
-  return km.format(seconds / 3600);
-}

@@ -1,14 +1,16 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
-import ActivityDetail from "./components/ActivityDetail.jsx";
+import { Suspense, lazy, useEffect, useLayoutEffect, useRef } from "react";
 import ActivityList from "./components/ActivityList.jsx";
 import AppNav from "./components/AppNav.jsx";
-import CalendarView from "./components/CalendarView.jsx";
 import ConnectStrava from "./components/ConnectStrava.jsx";
 import DashboardHeader from "./components/DashboardHeader.jsx";
 import StatsSummary from "./components/StatsSummary.jsx";
 import WeeklyChart from "./components/WeeklyChart.jsx";
 import { DASHBOARD_WEEKS, useDashboardData } from "./hooks/useDashboardData.js";
 import { isDashboardHash, useHashRoute } from "./hooks/useHashRoute.js";
+
+const ActivityDetail = lazy(() => import("./components/ActivityDetail.jsx"));
+const AssistantView = lazy(() => import("./components/AssistantView.jsx"));
+const CalendarView = lazy(() => import("./components/CalendarView.jsx"));
 
 const connectFailed =
   new URLSearchParams(window.location.search).get("strava") === "error";
@@ -53,7 +55,11 @@ export default function App() {
   if (route.name === "activity") {
     return (
       <main className="app">
-        <ActivityDetail id={route.id} onBack={goBack} />
+        <Suspense
+          fallback={<p className="muted center">Cargando actividad…</p>}
+        >
+          <ActivityDetail id={route.id} onBack={goBack} />
+        </Suspense>
       </main>
     );
   }
@@ -62,7 +68,24 @@ export default function App() {
     return (
       <main className="app">
         <AppNav current="calendar" />
-        <CalendarView />
+        <Suspense
+          fallback={<p className="muted center">Cargando calendario…</p>}
+        >
+          <CalendarView />
+        </Suspense>
+      </main>
+    );
+  }
+
+  if (route.name === "assistant") {
+    return (
+      <main className="app">
+        <AppNav current="assistant" />
+        <Suspense
+          fallback={<p className="muted center">Cargando asistente…</p>}
+        >
+          <AssistantView />
+        </Suspense>
       </main>
     );
   }

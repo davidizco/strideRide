@@ -13,6 +13,7 @@ import {
   formatPace,
   formatPaceShort,
 } from "../utils/format.js";
+import { AXIS_TICK, CHART_CURSOR } from "../utils/charts.js";
 
 function SplitTooltip({ active, payload }) {
   if (!active || !payload?.length) return null;
@@ -21,7 +22,7 @@ function SplitTooltip({ active, payload }) {
     <div className="chart-tooltip">
       <strong>Km {row.label}</strong>
       <span>{formatPace(row.speed)}</span>
-      {row.heartrate && <span>{formatHeartRate(row.heartrate)}</span>}
+      {row.heartrate > 0 ? <span>{formatHeartRate(row.heartrate)}</span> : null}
     </div>
   );
 }
@@ -38,7 +39,7 @@ export default function SplitsChart({ rows, color }) {
           <CartesianGrid vertical={false} stroke="var(--border)" />
           <XAxis
             dataKey="label"
-            tick={{ fontSize: 11 }}
+            tick={AXIS_TICK}
             tickLine={false}
             interval="preserveStartEnd"
           />
@@ -46,14 +47,11 @@ export default function SplitsChart({ rows, color }) {
             dataKey="speed"
             domain={[(min) => min * 0.9, "auto"]}
             tickFormatter={(speed) => formatPaceShort(speed)}
-            tick={{ fontSize: 11 }}
+            tick={AXIS_TICK}
             tickLine={false}
             axisLine={false}
           />
-          <Tooltip
-            content={<SplitTooltip />}
-            cursor={{ fill: "var(--border)", opacity: 0.4 }}
-          />
+          <Tooltip content={<SplitTooltip />} cursor={CHART_CURSOR} />
           <Bar dataKey="speed" radius={[4, 4, 0, 0]}>
             {rows.map((row) => (
               <Cell

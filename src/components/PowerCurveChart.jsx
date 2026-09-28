@@ -7,6 +7,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { AXIS_TICK, TOOLTIP_STYLE } from "../utils/charts.js";
 import { formatPower, formatShortDuration } from "../utils/format.js";
 
 export default function PowerCurveChart({ curve, color }) {
@@ -21,12 +22,12 @@ export default function PowerCurveChart({ curve, color }) {
           <XAxis
             dataKey="duration"
             tickFormatter={formatShortDuration}
-            tick={{ fontSize: 11 }}
+            tick={AXIS_TICK}
             tickLine={false}
           />
           <YAxis
             domain={["auto", "auto"]}
-            tick={{ fontSize: 11 }}
+            tick={AXIS_TICK}
             tickLine={false}
             axisLine={false}
           />
@@ -35,11 +36,7 @@ export default function PowerCurveChart({ curve, color }) {
               `Mejor ${formatShortDuration(duration)}`
             }
             formatter={(value) => [formatPower(value), "Potencia"]}
-            contentStyle={{
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: 8,
-            }}
+            contentStyle={TOOLTIP_STYLE}
           />
           <Line
             dataKey="watts"

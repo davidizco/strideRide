@@ -8,7 +8,7 @@ export default function ConnectStrava({ failed }) {
           No se pudo conectar con Strava. Inténtalo de nuevo.
         </p>
       )}
-      <a className="button" href="/auth/strava">
+      <a className="button button-strava" href="/auth/strava">
         Conectar con Strava
       </a>
     </section>

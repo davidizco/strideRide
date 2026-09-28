@@ -1,5 +1,5 @@
 export const SPORT_GROUPS = {
-  run: { label: "Carrera", color: "#fc4c02" },
+  run: { label: "Carrera", color: "#e4572e" },
   ride: { label: "Bici", color: "#2f80ed" },
   swim: { label: "Natación", color: "#00b8a9" },
   strength: { label: "Fuerza", color: "#9b51e0" },

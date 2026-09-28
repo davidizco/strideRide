@@ -9,6 +9,7 @@ Aplicación personal (un solo usuario) que sustituye a RestorTrain: dashboard re
 - **Datos**:
   - **Strava** (OAuth, `server/strava/`): solo para el dashboard. Tokens en `.data/strava-tokens.json` (ignorado por Git).
   - **Intervals.icu** (clave API personal, `server/intervals/`): calendario, entrenos planificados y datos de Garmin. Intervals.icu sincroniza con Garmin Connect de forma oficial.
+  - **IA** (`server/ai/client.js`, API compatible con OpenAI; por defecto Gemini con `AI_API_KEY`): asistente de `#/asistente`, cuyo bucle de tools está en `server/assistant/`. GitHub Models ya no existe (retirado en julio de 2026).
 - **Lint**: oxlint (`.oxlintrc.json`).
 - **Formato**: Prettier (`.prettierrc.json`): comillas dobles, punto y coma, comas finales y 80 columnas. Escribe el código ya con ese estilo y ejecuta `npm.cmd run format` tras editar.
 

@@ -17,6 +17,7 @@ export default function PlannedWorkout({ event, done, missed }) {
   const color = categoryLabel
     ? "var(--muted)"
     : SPORT_GROUPS[getSportGroup(event.type)].color;
+  const metrics = plannedMetrics(event);
 
   return (
     <li className="calendar-item planned" style={{ "--accent": color }}>
@@ -26,9 +27,9 @@ export default function PlannedWorkout({ event, done, missed }) {
         {missed && <span className="status status-missed">No realizado</span>}
       </div>
       {event.name && <p className="calendar-item-name">{event.name}</p>}
-      {plannedMetrics(event).length > 0 && (
+      {metrics.length > 0 && (
         <ul className="activity-metrics">
-          {plannedMetrics(event).map((metric) => (
+          {metrics.map((metric) => (
             <li key={metric}>{metric}</li>
           ))}
         </ul>

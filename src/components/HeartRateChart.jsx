@@ -7,6 +7,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { AXIS_TICK, TOOLTIP_STYLE } from "../utils/charts.js";
 import { formatClock, formatHeartRate } from "../utils/format.js";
 
 const HR_COLOR = "#e53935";
@@ -27,23 +28,19 @@ export default function HeartRateChart({ series }) {
               type="number"
               domain={["dataMin", "dataMax"]}
               tickFormatter={formatClock}
-              tick={{ fontSize: 11 }}
+              tick={AXIS_TICK}
               tickLine={false}
             />
             <YAxis
               domain={["dataMin - 5", "dataMax + 5"]}
-              tick={{ fontSize: 11 }}
+              tick={AXIS_TICK}
               tickLine={false}
               axisLine={false}
             />
             <Tooltip
               labelFormatter={(time) => formatClock(time)}
               formatter={(value) => [formatHeartRate(value), "FC"]}
-              contentStyle={{
-                background: "var(--surface)",
-                border: "1px solid var(--border)",
-                borderRadius: 8,
-              }}
+              contentStyle={TOOLTIP_STYLE}
             />
             <Line
               dataKey="heartrate"

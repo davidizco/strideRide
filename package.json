@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently -n web,api -c cyan,magenta \"npm:dev:web\" \"npm:dev:api\"",
     "dev:web": "vite",
-    "dev:api": "node --env-file-if-exists=.env --watch server/index.js",
+    "dev:api": "node --env-file-if-exists=.env --watch-path=server server/index.js",
     "dev:mobile": "concurrently -n web,api -c cyan,magenta \"vite --host\" \"npm:dev:api\"",
     "build": "vite build",
     "lint": "oxlint",
@@ -15,6 +15,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/archivo": "^5.3.0",
     "express": "^5.2.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

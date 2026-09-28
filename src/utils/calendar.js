@@ -48,7 +48,9 @@ export function formatWeekRange(mondayIso) {
 export function groupByDate(items) {
   const groups = new Map();
   for (const item of items) {
-    groups.set(item.date, [...(groups.get(item.date) ?? []), item]);
+    const group = groups.get(item.date);
+    if (group) group.push(item);
+    else groups.set(item.date, [item]);
   }
   return groups;
 }
