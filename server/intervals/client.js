@@ -81,6 +81,43 @@ async function intervalsGet(path, params = {}) {
 const athletePath = (path = "") =>
   `/athlete/${config.intervals.athleteId}${path}`;
 
+export async function createPlannedWorkout({ date, type, name, description }) {
+  const headers = {
+    Authorization: authorization(),
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    "User-Agent": "strideRide/0.1 (uso personal)",
+  };
+  try {
+    const response = await fetch(`${API_URL}${athletePath("/events")}`, {
+      method: "POST",
+      headers,
+      signal: AbortSignal.timeout(30000),
+      body: JSON.stringify({
+        category: "WORKOUT",
+        start_date_local: `${date}T00:00:00`,
+        type,
+        name,
+        description,
+      }),
+    });
+    if (!response.ok) {
+      throw Object.assign(new Error("No se pudo publicar en Intervals.icu."), {
+        status: response.status === 429 ? 429 : 502,
+      });
+    }
+    const event = await response.json();
+    if (!event?.id) {
+      throw Object.assign(new Error("Intervals.icu no confirmó el evento."), {
+        status: 502,
+      });
+    }
+    return { id: event.id };
+  } finally {
+    cache.clear();
+  }
+}
+
 function pickPlanned(event) {
   return {
     id: event.id,

@@ -756,6 +756,62 @@ code {
   color: var(--muted);
 }
 
+.workout-proposal {
+  width: 100%;
+  max-width: 40rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-inline-start: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+
+.workout-proposal article,
+.proposal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.proposal-header h2 {
+  font-size: 1.25rem;
+  line-height: 1.25;
+  letter-spacing: 0;
+}
+
+.proposal-status {
+  min-height: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.proposal-published {
+  color: var(--done);
+}
+
+.proposal-steps {
+  margin: 0;
+  padding-block: 0.75rem;
+  border-block: 1px solid var(--border);
+  font: inherit;
+  font-size: 0.9375rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.proposal-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.workout-proposal button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* La caja de texto queda fija abajo, respetando la barra de gestos del móvil. */
 .chat-composer {
   position: sticky;

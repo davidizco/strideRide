@@ -41,7 +41,11 @@ export function useAssistantChat() {
   }, []);
 
   useEffect(() => {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    try {
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    } catch {
+      console.warn("No se pudo guardar la conversación en esta pestaña.");
+    }
   }, [messages]);
 
   function request(history) {
@@ -50,12 +54,15 @@ export function useAssistantChat() {
     setPending(true);
     setError(null);
     sendChat(history, controller.signal)
-      .then(({ reply }) =>
+      .then(({ reply, proposals = [], model }) => {
+        if (controller.signal.aborted || inFlight.current !== controller)
+          return;
+        setStatus((current) => ({ ...current, model: model ?? current.model }));
         setMessages((current) => [
           ...current,
-          { role: "assistant", content: reply },
-        ]),
-      )
+          { role: "assistant", content: reply, proposals },
+        ]);
+      })
       .catch((err) => {
         if (!controller.signal.aborted) setError(err.message);
       })
@@ -84,5 +91,29 @@ export function useAssistantChat() {
     setMessages([]);
   };
 
-  return { status, messages, pending, error, send, retry, reset };
+  const updateProposal = (proposal) => {
+    setMessages((current) =>
+      current.map((message) =>
+        message.proposals?.some((item) => item.id === proposal.id)
+          ? {
+              ...message,
+              proposals: message.proposals.map((item) =>
+                item.id === proposal.id ? proposal : item,
+              ),
+            }
+          : message,
+      ),
+    );
+  };
+
+  return {
+    status,
+    messages,
+    pending,
+    error,
+    send,
+    retry,
+    reset,
+    updateProposal,
+  };
 }

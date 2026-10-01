@@ -10,6 +10,7 @@
     "dev:mobile": "concurrently -n web,api -c cyan,magenta \"vite --host\" \"npm:dev:api\"",
     "build": "vite build",
     "lint": "oxlint",
+    "test": "node --test server/assistant/proposals.test.js",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "preview": "vite preview"

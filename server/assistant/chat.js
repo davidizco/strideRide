@@ -1,5 +1,6 @@
 import { chatCompletion } from "../ai/client.js";
 import { buildSystemPrompt } from "./prompt.js";
+import { workoutProposals } from "./proposals.js";
 import { TOOL_DEFINITIONS, runTool } from "./tools.js";
 
 const MAX_TOOL_ROUNDS = 3;
@@ -11,6 +12,19 @@ const MAX_TOOL_ROUNDS = 3;
 export async function answer(history) {
   const system = await buildSystemPrompt();
   const messages = [{ role: "system", content: system.content }, ...history];
+  const proposals = [];
+  const propose = (args, today) => {
+    if (proposals.length) {
+      return { error: "Solo se permite una propuesta por respuesta." };
+    }
+    const proposal = workoutProposals.create(args, today);
+    proposals.push(proposal);
+    return {
+      proposalId: proposal.id,
+      status: proposal.status,
+      workout: proposal.workout,
+    };
+  };
   // Tras la primera respuesta se fija el modelo: las firmas de razonamiento no valen entre modelos.
   let model;
 
@@ -26,7 +40,15 @@ export async function answer(history) {
     model = response.model;
 
     if (lastRound || !message.tool_calls?.length) {
-      return { reply: message.content?.trim() || "No tengo respuesta.", model };
+      return {
+        reply:
+          message.content?.trim() ||
+          (proposals.length
+            ? "La propuesta está lista para revisar. Aún no se ha publicado."
+            : "No tengo respuesta."),
+        model,
+        proposals,
+      };
     }
 
     // Se reenvía el mensaje tal cual: Gemini 3 necesita sus firmas de razonamiento.
@@ -36,6 +58,7 @@ export async function answer(history) {
         call.function?.name,
         call.function?.arguments,
         system.today,
+        propose,
       );
       messages.push({
         role: "tool",

@@ -2,6 +2,7 @@ import express from "express";
 import { isAiConfigured } from "./ai/client.js";
 import { summarizeStreams } from "./analysis/streams.js";
 import { answer } from "./assistant/chat.js";
+import { workoutProposals } from "./assistant/proposals.js";
 import { config } from "./config.js";
 import { getCalendar, isIntervalsConfigured } from "./intervals/client.js";
 import {
@@ -19,7 +20,7 @@ import {
   getAthleteStats,
 } from "./strava/client.js";
 
-const app = express();
+export const app = express();
 
 app.get("/auth/strava", (req, res) => {
   res.redirect(buildAuthorizeUrl());
@@ -141,6 +142,51 @@ app.get("/api/assistant/status", (req, res) => {
   });
 });
 
+app.param("proposalId", (req, res, next, id) => {
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      id,
+    )
+  ) {
+    return res.status(400).json({ error: "Id de propuesta no válido." });
+  }
+  next();
+});
+
+app.get("/api/assistant/proposals/:proposalId", (req, res) => {
+  res.json(workoutProposals.get(req.params.proposalId));
+});
+
+app.post(
+  "/api/assistant/proposals/:proposalId/:action",
+  express.json({ limit: "1kb" }),
+  async (req, res) => {
+    if (
+      !req.is("application/json") ||
+      req.get("X-strideRide-Confirm") !== "1" ||
+      req.get("Sec-Fetch-Site") === "cross-site" ||
+      req.body?.confirmed !== true
+    ) {
+      return res
+        .status(400)
+        .json({ error: "Se requiere confirmación explícita." });
+    }
+    const { proposalId, action } = req.params;
+    if (action === "confirm") {
+      if (!isIntervalsConfigured()) {
+        return res
+          .status(503)
+          .json({ error: "Intervals.icu no está configurado." });
+      }
+      res.json(await workoutProposals.confirm(proposalId));
+    } else if (action === "discard") {
+      res.json(workoutProposals.discard(proposalId));
+    } else {
+      res.status(404).json({ error: "Acción no válida." });
+    }
+  },
+);
+
 // Solo JSON: un formulario de otra web no puede enviar este tipo sin permiso CORS.
 app.post(
   "/api/assistant/chat",
@@ -168,6 +214,8 @@ app.use((err, req, res, _next) => {
 });
 
 // Solo escucha en local: el acceso desde el móvil pasa por el proxy de Vite.
-app.listen(config.port, "127.0.0.1", () => {
-  console.log(`API de strideRide en http://127.0.0.1:${config.port}`);
-});
+if (import.meta.main) {
+  app.listen(config.port, "127.0.0.1", () => {
+    console.log(`API de strideRide en http://127.0.0.1:${config.port}`);
+  });
+}

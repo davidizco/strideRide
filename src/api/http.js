@@ -13,10 +13,10 @@ export function getJson(path, signal) {
   return request(path, { signal });
 }
 
-export function postJson(path, data, signal) {
+export function postJson(path, data, signal, headers = {}) {
   return request(path, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...headers },
     body: JSON.stringify(data),
     signal,
   });

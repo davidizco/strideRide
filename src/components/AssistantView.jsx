@@ -7,7 +7,7 @@ const SUGGESTIONS = [
   "¿Cómo va mi forma esta semana?",
   "¿Qué tal fue mi último entreno de bici?",
   "¿Estoy durmiendo y recuperando bien?",
-  "¿Qué tengo planificado para los próximos días?",
+  "Propón un rodaje suave de 40 minutos para mañana",
 ];
 
 function NotConfigured({ status }) {
@@ -31,8 +31,16 @@ function NotConfigured({ status }) {
 }
 
 export default function AssistantView() {
-  const { status, messages, pending, error, send, retry, reset } =
-    useAssistantChat();
+  const {
+    status,
+    messages,
+    pending,
+    error,
+    send,
+    retry,
+    reset,
+    updateProposal,
+  } = useAssistantChat();
 
   // La caja de texto es sticky: se baja la página entera para que no tape el último mensaje.
   useEffect(() => {
@@ -81,7 +89,11 @@ export default function AssistantView() {
       ) : (
         <ol className="chat-messages" aria-live="polite">
           {messages.map((message, index) => (
-            <ChatMessage key={index} {...message} />
+            <ChatMessage
+              key={index}
+              {...message}
+              onProposalUpdate={updateProposal}
+            />
           ))}
           {pending ? (
             <li className="chat-message assistant pending">Pensando…</li>
