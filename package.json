@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently -n web,api -c cyan,magenta \"npm:dev:web\" \"npm:dev:api\"",
     "dev:web": "vite",
-    "dev:api": "node --env-file-if-exists=.env --watch-path=server server/index.js",
+    "dev:api": "node --use-system-ca --env-file-if-exists=.env --watch-path=server server/index.js",
     "dev:mobile": "concurrently -n web,api -c cyan,magenta \"vite --host\" \"npm:dev:api\"",
     "build": "vite build",
     "lint": "oxlint",
